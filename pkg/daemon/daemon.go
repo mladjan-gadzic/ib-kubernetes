@@ -263,18 +263,18 @@ func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podU
 		// Try to remove pKeys via subnet manager in backoff loop
 		if err = wait.ExponentialBackoff(backoffValues, func() (bool, error) {
 			log.Info().Msgf("removing guids of previous pods from pKey %s"+
-					" with subnet manager %s", pkey,
+					" with subnet manager %s", existingPkey,
 					d.smClient.Name())
 			if err = d.smClient.RemoveGuidsFromPKey(parsedPkey, allocatedGUIDList); err != nil {
 				log.Warn().Msgf("failed to remove guids of removed pods from pKey %s"+
-					" with subnet manager %s with error: %v", pkey,
+					" with subnet manager %s with error: %v", existingPkey,
 					d.smClient.Name(), err)
 				return false, nil
 			}
 			return true, nil
 		}); err != nil {
 			log.Warn().Msgf("failed to remove guids of removed pods from pKey %s"+
-				" with subnet manager %s", pkey, d.smClient.Name())
+				" with subnet manager %s", existingPkey, d.smClient.Name())
 		} else {
 			if err = d.guidPool.ReleaseGUID(allocatedGUID); err != nil {
 				log.Warn().Msgf("failed to release guid \"%s\" with error: %v", allocatedGUID, err)
