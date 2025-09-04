@@ -98,9 +98,8 @@ func GetPodNetworkPkey(network *v1.NetworkSelectionElement) (string, error) {
 			"no \"pkey\" field in \"cni-arg\" in network %+v", network)
 	}
 
-	return fmt.Sprintf("%s", pkey), nil
+	return pkey.(string), nil
 }
-
 
 // GetPodNetworkGUID return network cni-args guid field
 func GetPodNetworkGUID(network *v1.NetworkSelectionElement) (string, error) {
