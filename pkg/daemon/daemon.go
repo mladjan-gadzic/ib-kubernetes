@@ -247,12 +247,12 @@ func getPodNetworkInfo(netName string, pod *kapi.Pod, netMap networksMap) (*podN
 }
 
 // Verify if GUID already exist for given network ID and allocates new one if not
-func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podUID types.UID, pkey string) error {
+func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podUID types.UID, targetPkey string) error {
 	existingPkey, _ := d.guidPool.Get(allocatedGUID)
 	if existingPkey != "" {
 		parsedPkey, err := utils.ParsePKey(existingPkey)
 		if err != nil {
-			log.Error().Msgf("failed to parse PKey %s with error: %v", pkey, err)
+			log.Error().Msgf("failed to parse PKey %s with error: %v", existingPkey, err)
 			return err
 		}
 		guidAddr, err := guid.ParseGUID(allocatedGUID)
@@ -289,8 +289,8 @@ func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podU
 			return fmt.Errorf("failed to allocate requested guid %s, already allocated for %s",
 				allocatedGUID, mappedID)
 		}
-	} else if err := d.guidPool.AllocateGUID(allocatedGUID, pkey); err != nil {
-		return fmt.Errorf("failed to allocate GUID for pod ID %s, wit error: %v", podUID, err)
+	} else if err := d.guidPool.AllocateGUID(allocatedGUID, targetPkey); err != nil {
+		return fmt.Errorf("failed to allocate GUID for pod ID %s, with error: %v", podUID, err)
 	} else {
 		d.guidPodNetworkMap[allocatedGUID] = podNetworkID
 	}
