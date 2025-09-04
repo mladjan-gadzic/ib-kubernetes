@@ -64,7 +64,7 @@ func (p *plugin) RemoveGuidsFromPKey(pkey int, guids []net.HardwareAddr) error {
 	return nil
 }
 
-func (p *plugin) ListGuidsInUse() ([]string, error) {
+func (p *plugin) ListGuidsInUse() (map[string]string, error) {
 	log.Info().Msg("noop Plugin ListGuidsInUse()")
 	return nil, nil
 }
