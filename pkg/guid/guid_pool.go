@@ -46,9 +46,9 @@ type Pool interface {
 var ErrGUIDPoolExhausted = errors.New("GUID pool is exhausted")
 
 type guidPool struct {
-	rangeStart  GUID          // first guid in range
-	rangeEnd    GUID          // last guid in range
-	currentGUID GUID          // last given guid
+	rangeStart  GUID            // first guid in range
+	rangeEnd    GUID            // last guid in range
+	currentGUID GUID            // last given guid
 	guidPoolMap map[GUID]string // allocated guid map and pkey
 }
 
@@ -138,7 +138,7 @@ func (p *guidPool) Get(guid string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	pkey, _ := p.guidPoolMap[guidAddr]
+	pkey := p.guidPoolMap[guidAddr]
 	return pkey, nil
 }
 

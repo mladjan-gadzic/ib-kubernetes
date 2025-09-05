@@ -263,13 +263,13 @@ func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podU
 		// Try to remove pKeys via subnet manager in backoff loop
 		if err = wait.ExponentialBackoff(backoffValues, func() (bool, error) {
 			log.Info().Msgf("removing guids of previous pods from pKey %s"+
-					" with subnet manager %s", existingPkey,
-					d.smClient.Name())
+				" with subnet manager %s", existingPkey,
+				d.smClient.Name())
 			if err = d.smClient.RemoveGuidsFromPKey(parsedPkey, allocatedGUIDList); err != nil {
 				log.Warn().Msgf("failed to remove guids of removed pods from pKey %s"+
 					" with subnet manager %s with error: %v", existingPkey,
 					d.smClient.Name(), err)
-				return false, nil
+				return false, nil //nolint:nilerr // retry pattern for exponential backoff
 			}
 			return true, nil
 		}); err != nil {
@@ -282,7 +282,6 @@ func (d *daemon) allocatePodNetworkGUID(allocatedGUID, podNetworkID string, podU
 			delete(d.guidPodNetworkMap, allocatedGUID)
 			log.Info().Msgf("successfully released %s from pkey %s", allocatedGUID, existingPkey)
 		}
-
 	}
 	if mappedID, exist := d.guidPodNetworkMap[allocatedGUID]; exist {
 		if podNetworkID != mappedID {
@@ -589,7 +588,8 @@ func (d *daemon) DeletePeriodicUpdate() {
 					log.Info().Msgf("matched guid %s to pod %s, removing", guidAddr, guidPodEntry)
 					guidList = append(guidList, guidAddr)
 				} else {
-					log.Warn().Msgf("guid %s is allocated to another pod %s not %s, not removing", guidAddr, guidPodEntry, podNetworkID)
+					log.Warn().Msgf("guid %s is allocated to another pod %s not %s, not removing",
+						guidAddr, guidPodEntry, podNetworkID)
 				}
 			} else {
 				log.Warn().Msgf("guid %s is not allocated to any pod on delete", guidAddr)
